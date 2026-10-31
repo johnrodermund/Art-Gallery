@@ -168,9 +168,11 @@ def cmd_demo(args, app):
     first_painting = None
     for i, (who, title, w, h, price, status) in enumerate(works):
         img = make(w, h, palettes[i % len(palettes)])
-        with tempfile.NamedTemporaryFile(suffix=".png") as tmp:
-            img.save(tmp.name)
-            with open(tmp.name, "rb") as handle:
+        # A NamedTemporaryFile can't be reopened by name on Windows while it is open.
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "demo.png"
+            img.save(path)
+            with open(path, "rb") as handle:
                 class Upload:
                     stream = handle
                 key, width, height = images.save_painting_image(Upload, media_root)
