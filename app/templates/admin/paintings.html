@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% from "_macros.html" import status_chip %}
+{% block title %}All paintings · {% endblock %}
+{% block content %}
+<div class="page-head"><h1>All paintings</h1>
+  <p class="actions"><a class="btn secondary" href="{{ url_for('admin.index') }}">Artists</a></p></div>
+{% if paintings %}
+<div class="table-wrap">
+<table class="table">
+  <thead><tr><th scope="col">Painting</th><th scope="col">Artist</th><th scope="col">Status</th><th scope="col"><span class="sr">Actions</span></th></tr></thead>
+  <tbody>
+  {% for p in paintings %}
+  <tr>
+    <td class="thumb-cell"><img src="{{ image_url(p['image_key'], 'thumb') }}" width="{{ p['width'] }}" height="{{ p['height'] }}" alt=""><span>{{ p['title'] }}</span></td>
+    <td>{{ p['artist_name'] }}</td>
+    <td>{{ status_chip(p['status']) }}</td>
+    <td class="row-actions">
+      {% if p['status'] != 'hidden' %}<form method="post" action="{{ url_for('admin.hide_painting', pid=p['id']) }}" class="inline">{{ csrf_field() }}<button class="linklike" type="submit">Hide</button></form>{% endif %}
+      <form method="post" action="{{ url_for('admin.delete_painting', pid=p['id']) }}" data-confirm="Delete “{{ p['title'] }}” permanently?" class="inline">{{ csrf_field() }}<button class="linklike danger" type="submit">Delete</button></form>
+    </td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% else %}<p class="empty">There are no paintings yet.</p>{% endif %}
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% from "_macros.html" import status_chip %}
+{% block title %}Request · {% endblock %}
+{% block content %}
+<section class="narrow wide">
+  <p><a href="{{ url_for('dash.inbox') }}">Back to the inbox</a></p>
+  <h1>{{ m['buyer_name'] }} asked about “{{ m['painting_title'] }}”</h1>
+  <p class="muted">{{ m['created_at']|when }}</p>
+  <div class="msg-detail">
+    {% if m['image_key'] %}<img src="{{ image_url(m['image_key'], 'medium') }}" width="{{ m['width'] }}" height="{{ m['height'] }}" alt="{{ m['painting_title'] }}">{% endif %}
+    <div>
+      <p class="contact"><strong>Contact:</strong> {{ m['buyer_contact'] }}</p>
+      {% if m['body'] %}<div class="prose">{{ m['body']|paragraphs }}</div>{% else %}<p class="muted">No message was written.</p>{% endif %}
+      {% if m['painting_id'] %}
+        <p>Painting status: {{ status_chip(m['painting_status']) }}</p>
+        <form method="post" action="{{ url_for('dash.set_status', pid=m['painting_id']) }}" class="actions">
+          {{ csrf_field() }}
+          <input type="hidden" name="back" value="{{ url_for('dash.message', mid=m['id']) }}">
+          <button class="btn secondary" name="status" value="reserved" type="submit">Mark reserved</button>
+          <button class="btn secondary" name="status" value="sold" type="submit">Mark sold</button>
+          <button class="btn secondary" name="status" value="available" type="submit">Mark available</button>
+        </form>
+      {% else %}<p class="muted">This painting has since been deleted.</p>{% endif %}
+    </div>
+  </div>
+  <form method="post" class="stack">
+    {{ csrf_field() }}
+    <label>Your private notes <span class="optional">(only you can see these)</span>
+      <textarea name="note" rows="3" maxlength="1000">{{ m['artist_note'] }}</textarea>
+    </label>
+    <p class="actions">
+      <button class="btn" type="submit" name="action" value="">Save notes</button>
+      {% if m['status'] == 'archived' %}
+        <button class="btn secondary" type="submit" name="action" value="restore">Move back to inbox</button>
+      {% else %}
+        <button class="btn secondary" type="submit" name="action" value="unread">Mark as new</button>
+        <button class="btn secondary" type="submit" name="action" value="archive">Archive</button>
+      {% endif %}
+    </p>
+  </form>
+</section>
+{% endblock %}

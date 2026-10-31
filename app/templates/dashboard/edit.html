@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% from "_macros.html" import errors_list %}
+{% block title %}{{ 'Edit painting' if painting else 'Add a painting' }} · {% endblock %}
+{% block content %}
+<section class="narrow wide">
+  <h1>{{ 'Edit painting' if painting else 'Add a painting' }}</h1>
+  {{ errors_list(errors) }}
+  <form method="post" enctype="multipart/form-data" class="stack">
+    {{ csrf_field() }}
+    <label>Title <input name="title" value="{{ form['title'] }}" maxlength="120" required></label>
+    <label>Description <span class="optional">(size, medium, year, story)</span>
+      <textarea name="description" rows="6" maxlength="4000">{{ form['description'] }}</textarea>
+    </label>
+    <div class="two">
+      <label>Price <span class="optional">(leave empty for “Price on request”)</span>
+        <input name="price" value="{{ form['price'] }}" inputmode="decimal" placeholder="450">
+      </label>
+      <label>Status
+        <select name="status">{% for s in statuses %}<option value="{{ s }}"{% if s == form['status'] %} selected{% endif %}>{{ status_labels[s] }}</option>{% endfor %}</select>
+      </label>
+    </div>
+    <label>Photo of the painting {% if painting %}<span class="optional">(choose a file only to replace the current one)</span>{% endif %}
+      <input type="file" name="image" accept="image/jpeg,image/png,image/webp" data-preview="preview" {{ '' if painting else 'required' }}>
+    </label>
+    <p class="hint">JPEG, PNG or WebP, up to 16 MB. Smaller copies are made automatically.</p>
+    {% if painting %}<img id="preview" class="preview" src="{{ image_url(painting['image_key'], 'medium') }}" width="{{ painting['width'] }}" height="{{ painting['height'] }}" alt="Current photo of {{ painting['title'] }}">
+    {% else %}<img id="preview" class="preview" alt="" hidden>{% endif %}
+    <p class="actions"><button class="btn" type="submit">Save painting</button> <a class="btn secondary" href="{{ url_for('dash.index') }}">Cancel</a></p>
+  </form>
+</section>
+{% endblock %}

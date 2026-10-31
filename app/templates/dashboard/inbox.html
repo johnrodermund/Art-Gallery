@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Inbox · {% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>Requests from buyers</h1>
+  <p class="filters">
+    {% for key, label in [('active', 'Open'), ('unread', 'New'), ('archived', 'Archived'), ('all', 'All')] %}
+      <a href="{{ url_for('dash.inbox', show=key) }}"{% if show == key %} aria-current="true"{% endif %}>{{ label }}</a>
+    {% endfor %}
+  </p>
+</div>
+{% if messages %}
+<ul class="messages">
+  {% for m in messages %}
+  <li class="msg{% if m['status'] == 'unread' %} is-new{% endif %}">
+    {% if m['image_key'] %}<img src="{{ image_url(m['image_key'], 'thumb') }}" width="{{ m['width'] }}" height="{{ m['height'] }}" alt="">{% else %}<span class="no-thumb"></span>{% endif %}
+    <div>
+      <a class="msg-title" href="{{ url_for('dash.message', mid=m['id']) }}">{{ m['buyer_name'] }} asked about “{{ m['painting_title'] }}”</a>
+      <p class="muted">{{ m['created_at']|when }}{% if m['status'] == 'unread' %} · new{% elif m['status'] == 'archived' %} · archived{% endif %}</p>
+      {% if m['body'] %}<p>{{ m['body']|truncate(140) }}</p>{% endif %}
+    </div>
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<p class="empty">{{ 'No new requests.' if show == 'unread' else 'No requests here yet. When a buyer clicks “Request this painting”, it appears here.' }}</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,4 @@
+Flask>=3.0
+Pillow>=10.0
+# Optional: a production-grade server for running on a local network
+# waitress>=3.0

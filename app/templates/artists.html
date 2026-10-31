@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Artists · {% endblock %}
+{% block content %}
+<div class="page-head"><h1>Artists</h1></div>
+{% if artists %}
+<ul class="artist-list">
+  {% for a in artists %}
+  <li>
+    <a class="artist-name" href="{{ url_for('public.artist', username=a['username']) }}">{{ a['display_name'] }}</a>
+    <span class="count">{{ a['total'] }} painting{{ '' if a['total'] == 1 else 's' }}, {{ a['available'] or 0 }} available</span>
+    {% if a['bio'] %}<p>{{ a['bio']|truncate(160) }}</p>{% endif %}
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<p class="empty">No artists have listed paintings yet.</p>
+{% endif %}
+{% endblock %}

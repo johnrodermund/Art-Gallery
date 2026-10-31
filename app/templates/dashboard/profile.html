@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% from "_macros.html" import errors_list %}
+{% block title %}Profile · {% endblock %}
+{% block content %}
+<section class="narrow">
+  <h1>Your profile</h1>
+  {{ errors_list(errors) }}
+  <form method="post" class="stack">
+    {{ csrf_field() }}
+    <label>Name shown on your paintings <input name="display_name" value="{{ form['display_name'] }}" maxlength="60" required></label>
+    <label>About you <span class="optional">(shown on your artist page)</span>
+      <textarea name="bio" rows="6" maxlength="1500">{{ form['bio'] }}</textarea>
+    </label>
+    <button class="btn" type="submit">Save profile</button>
+  </form>
+</section>
+{% endblock %}

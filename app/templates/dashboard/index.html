@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% from "_macros.html" import status_chip %}
+{% block title %}My paintings · {% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>My paintings</h1>
+  <p class="actions"><a class="btn" href="{{ url_for('dash.new_painting') }}">Add a painting</a>
+  <a class="btn secondary" href="{{ url_for('dash.profile') }}">Edit profile</a></p>
+</div>
+{% if paintings %}
+<div class="table-wrap">
+<table class="table">
+  <thead><tr><th scope="col">Painting</th><th scope="col">Price</th><th scope="col">Status</th><th scope="col">Requests</th><th scope="col"><span class="sr">Actions</span></th></tr></thead>
+  <tbody>
+  {% for p in paintings %}
+  <tr>
+    <td class="thumb-cell">
+      <img src="{{ image_url(p['image_key'], 'thumb') }}" width="{{ p['width'] }}" height="{{ p['height'] }}" alt="">
+      <a href="{{ url_for('dash.edit_painting', pid=p['id']) }}">{{ p['title'] }}</a>
+    </td>
+    <td>{{ p['price_cents']|money }}</td>
+    <td>
+      <form method="post" action="{{ url_for('dash.set_status', pid=p['id']) }}" class="inline-select">
+        {{ csrf_field() }}
+        <label class="sr" for="status-{{ p['id'] }}">Status of {{ p['title'] }}</label>
+        <select id="status-{{ p['id'] }}" name="status" data-autosubmit>
+          {% for s in ['available', 'reserved', 'sold', 'hidden'] %}<option value="{{ s }}"{% if s == p['status'] %} selected{% endif %}>{{ status_labels[s] }}</option>{% endfor %}
+        </select>
+        <noscript><button class="btn small" type="submit">Update</button></noscript>
+      </form>
+    </td>
+    <td>{% if p['unread'] %}<a href="{{ url_for('dash.inbox', show='unread') }}">{{ p['unread'] }} new</a>{% else %}<span class="muted">None new</span>{% endif %}</td>
+    <td class="row-actions">
+      <a href="{{ url_for('dash.edit_painting', pid=p['id']) }}">Edit</a>
+      <form method="post" action="{{ url_for('dash.delete_painting', pid=p['id']) }}" data-confirm="Delete “{{ p['title'] }}” permanently?" class="inline">{{ csrf_field() }}<button class="linklike danger" type="submit">Delete</button></form>
+    </td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% else %}
+<p class="empty">You have not added any paintings. <a href="{{ url_for('dash.new_painting') }}">Add your first painting</a>.</p>
+{% endif %}
+{% endblock %}

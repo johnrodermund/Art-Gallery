@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% from "_macros.html" import status_chip, errors_list %}
+{% block title %}{{ p['title'] }} · {% endblock %}
+{% block content %}
+<article class="detail">
+  <a class="image-link" href="{{ image_url(p['image_key'], 'large') }}">
+    <img src="{{ image_url(p['image_key'], 'medium') }}" width="{{ p['width'] }}" height="{{ p['height'] }}" alt="{{ p['title'] }}, painting by {{ p['artist_name'] }}">
+  </a>
+  <div class="plaque">
+    <h1>{{ p['title'] }}</h1>
+    <p class="by"><a href="{{ url_for('public.artist', username=p['artist_username']) }}">{{ p['artist_name'] }}</a></p>
+    <p class="price">{{ p['price_cents']|money }} {{ status_chip(p['status']) }}</p>
+    {% if p['description'] %}<div class="prose">{{ p['description']|paragraphs }}</div>{% endif %}
+
+    {% if p['status'] == 'available' %}
+    <form method="post" action="{{ url_for('public.buy_request', pid=p['id']) }}" class="stack buy">
+      <h2>Request this painting</h2>
+      {{ errors_list(errors) }}
+      {{ csrf_field() }}
+      <label>Your name
+        <input name="name" value="{{ form.get('name', '') }}" maxlength="80" required autocomplete="name">
+      </label>
+      <label>Email or phone number
+        <input name="contact" value="{{ form.get('contact', '') }}" maxlength="120" required autocomplete="email">
+      </label>
+      <label>Message <span class="optional">(optional)</span>
+        <textarea name="message" rows="4" maxlength="2000">{{ form.get('message', '') }}</textarea>
+      </label>
+      <div class="hp" aria-hidden="true"><label>Leave this empty <input name="website" tabindex="-1" autocomplete="off"></label></div>
+      <button class="btn" type="submit">Send request to {{ p['artist_name'] }}</button>
+      <p class="hint">{{ p['artist_name'] }} sees your request in their inbox and contacts you using the details above. Sending a request does not commit you to buy and no payment is taken here.</p>
+    </form>
+    {% elif p['status'] == 'reserved' %}
+      <p class="hint">This painting is reserved for another buyer.</p>
+    {% else %}
+      <p class="hint">This painting has been sold.</p>
+    {% endif %}
+  </div>
+</article>
+{% endblock %}
