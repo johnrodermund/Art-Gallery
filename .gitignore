@@ -1,0 +1,11 @@
+# Runtime data: database, media, secret key and backups
+instance/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Local environment
+.env

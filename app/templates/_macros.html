@@ -1,0 +1,18 @@
+{% macro status_chip(status) %}<span class="status status-{{ status }}">{{ status_labels[status] }}</span>{% endmacro %}
+
+{% macro work(p) %}
+<figure class="work">
+  <a class="frame" href="{{ url_for('public.painting', pid=p['id']) }}">
+    <img src="{{ image_url(p['image_key'], 'thumb') }}" width="{{ p['width'] }}" height="{{ p['height'] }}" alt="{{ p['title'] }}, painting by {{ p['artist_name'] }}" loading="lazy">
+  </a>
+  <figcaption class="label">
+    <a class="title" href="{{ url_for('public.painting', pid=p['id']) }}">{{ p['title'] }}</a>
+    <span class="by">{{ p['artist_name'] }}</span>
+    <span class="meta">{{ p['price_cents']|money }} {{ status_chip(p['status']) }}</span>
+  </figcaption>
+</figure>
+{% endmacro %}
+
+{% macro errors_list(errors) %}
+{% if errors %}<ul class="errors" role="alert">{% for e in errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+{% endmacro %}

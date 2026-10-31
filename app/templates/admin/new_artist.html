@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% from "_macros.html" import errors_list %}
+{% block title %}Add an artist · {% endblock %}
+{% block content %}
+<section class="narrow">
+  <h1>Add an artist</h1>
+  {{ errors_list(errors) }}
+  <form method="post" class="stack">
+    {{ csrf_field() }}
+    <label>Username <span class="optional">(lowercase letters, numbers, - or _)</span><input name="username" value="{{ form['username'] }}" required maxlength="30" autocapitalize="none"></label>
+    <label>Display name <input name="display_name" value="{{ form['display_name'] }}" required maxlength="60"></label>
+    <p class="hint">A temporary password is created for you to pass to the artist. They must choose their own at first login.</p>
+    <button class="btn" type="submit">Create artist</button>
+  </form>
+</section>
+{% endblock %}

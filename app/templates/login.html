@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Log in · {% endblock %}
+{% block content %}
+<section class="narrow">
+  <h1>Artist login</h1>
+  <form method="post" class="stack" autocomplete="on">
+    {{ csrf_field() }}
+    <label>Username <input name="username" value="{{ username }}" required autocomplete="username" autofocus></label>
+    <label>Password <input name="password" type="password" required autocomplete="current-password"></label>
+    <button class="btn" type="submit">Log in</button>
+  </form>
+  <p class="hint">Forgot your password? Ask the site admin to reset it.</p>
+</section>
+{% endblock %}

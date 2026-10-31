@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% from "_macros.html" import work %}
+{% block content %}
+<div class="page-head">
+  <h1>Paintings for sale</h1>
+  <p class="filters">
+    <a href="{{ url_for('public.index') }}"{% if not only_available %} aria-current="true"{% endif %}>All</a>
+    <a href="{{ url_for('public.index', available=1) }}"{% if only_available %} aria-current="true"{% endif %}>Available now</a>
+  </p>
+</div>
+{% if paintings %}
+  <div class="wall">{% for p in paintings %}{{ work(p) }}{% endfor %}</div>
+{% else %}
+  <p class="empty">No paintings are listed yet. Artists can <a href="{{ url_for('auth.login') }}">log in</a> to add theirs.</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% from "_macros.html" import work %}
+{% block title %}{{ person['display_name'] }} · {% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>{{ person['display_name'] }}</h1>
+</div>
+{% if person['bio'] %}<div class="prose bio">{{ person['bio']|paragraphs }}</div>{% endif %}
+{% if paintings %}
+  <div class="wall">{% for p in paintings %}{{ work(p) }}{% endfor %}</div>
+{% else %}
+  <p class="empty">{{ person['display_name'] }} has no paintings listed right now.</p>
+{% endif %}
+{% endblock %}

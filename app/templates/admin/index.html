@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Artists admin · {% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>Artists</h1>
+  <p class="actions"><a class="btn" href="{{ url_for('admin.new_artist') }}">Add an artist</a>
+  <a class="btn secondary" href="{{ url_for('admin.paintings') }}">All paintings</a></p>
+</div>
+{% if artists %}
+<div class="table-wrap">
+<table class="table">
+  <thead><tr><th scope="col">Artist</th><th scope="col">Username</th><th scope="col">Paintings</th><th scope="col">New requests</th><th scope="col">Account</th><th scope="col"><span class="sr">Actions</span></th></tr></thead>
+  <tbody>
+  {% for a in artists %}
+  <tr>
+    <td>{{ a['display_name'] }}</td>
+    <td>{{ a['username'] }}</td>
+    <td>{{ a['painting_count'] }}</td>
+    <td>{{ a['unread'] }}</td>
+    <td>{{ 'Active' if a['active'] else 'Inactive' }}{% if a['must_change_password'] %}, temporary password{% endif %}</td>
+    <td class="row-actions">
+      <form method="post" action="{{ url_for('admin.reset_password', uid=a['id']) }}" data-confirm="Reset the password for {{ a['display_name'] }}?" class="inline">{{ csrf_field() }}<button class="linklike" type="submit">Reset password</button></form>
+      <form method="post" action="{{ url_for('admin.toggle_active', uid=a['id']) }}" class="inline">{{ csrf_field() }}<button class="linklike" type="submit">{{ 'Deactivate' if a['active'] else 'Activate' }}</button></form>
+    </td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% else %}
+<p class="empty">No artists yet. <a href="{{ url_for('admin.new_artist') }}">Add the first one</a>.</p>
+{% endif %}
+{% endblock %}
